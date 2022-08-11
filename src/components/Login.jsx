@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDsBXBK-QQHss71FdX46qeD5w3NH3cAMHo",
@@ -12,8 +12,11 @@ const firebaseConfig = {
 };
 
 function Login({ setIsLoggedIn }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+ 
+ 
+ 
   const handleSignup = async () => {
     //connect to firebase project
     const app = initializeApp(firebaseConfig);
@@ -31,6 +34,28 @@ function Login({ setIsLoggedIn }) {
       setIsLoggedIn(true);
     }
   };
+
+
+  const connectAuth = async () => {
+    const app = initializeApp(firebaseConfig)
+    return getAuth(app)
+  }
+
+
+
+  const handleLogin = async () => {
+    const auth = await connectAuth()
+    const user = signInWithEmailAndPassword(auth, email, password)
+        .catch((err) => alert(err.message))
+    if(user){
+        console.log(user.user)
+        setIsLoggedIn(true)
+    }
+  }
+
+
+
+
   return (
     <form onSubmit={(e) => e.preventDefault()}>
       <label htmlFor="email">
@@ -46,15 +71,17 @@ function Login({ setIsLoggedIn }) {
       <br />
       <label htmlFor="password">
         Password:
-        <input 
-        value={password}
-        name="password"
-        onChange={(e) => setPassword(e.target.value)} 
-        type="password" 
-        placeholder="your password" />
+        <input
+          value={password}
+          name="password"
+          onChange={(e) => setPassword(e.target.value)}
+          type="password"
+          placeholder="your password"
+        />
       </label>
       <br />
-      <button onClick={handleSignup}>Sign Up</button>
+      <button onClick={handleSignup}>Sign Up</button>&nbsp;
+      <button onClick={handleLogin}>Login</button>&nbsp;
     </form>
   );
 }
